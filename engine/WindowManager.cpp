@@ -3,15 +3,31 @@
 namespace ECSEngine {
 
 WindowManager::WindowManager(unsigned int width, unsigned int height, const std::string& title)
-    : mWindow(std::make_shared<sf::RenderWindow>(sf::VideoMode({width, height}), title)) {}
+    : mWindow(std::make_shared<sf::RenderWindow>(sf::VideoMode({width, height}), title)), mViewCenterWorld(static_cast<float>(width) / 2.f, static_cast<float>(height) / 2.f), mWorldUnitsPerPixel(1.f) {}
 
 std::shared_ptr<sf::RenderWindow> WindowManager::GetWindow() const { return mWindow; }
 
-Rect WindowManager::GetWindowBounds() const { return Rect(); }
+Rect WindowManager::GetWindowBounds() const {
+    return Rect(Point2D(0.f, 0.f), GetWindowSize().x, GetWindowSize().y);
+}
 
-void WindowManager::DebugDrawRect(const Rect& r, int red, int green, int blue, int alpha) {}
+void WindowManager::DebugDrawRect(const Rect& r, int red, int green, int blue, int alpha) {
+    Rect r2 = WorldToWindow(r);
+    sf::RectangleShape rectangle({r2.width, r2.height});
+    rectangle.setPosition({r2.topLeft.x, r2.topLeft.y});
+    rectangle.setFillColor(sf::Color(red, green, blue, alpha));
+    mWindow->draw(rectangle);
+}
 
-void WindowManager::DebugFrameRect(const Rect& r, int red, int green, int blue, int alpha) {}
+void WindowManager::DebugFrameRect(const Rect& r, int red, int green, int blue, int alpha) {
+    Rect r2 = WorldToWindow(r);
+    sf::RectangleShape rectangle({r2.width, r2.height});
+    rectangle.setPosition({r2.topLeft.x, r2.topLeft.y});
+    rectangle.setOutlineColor(sf::Color(red, green, blue, alpha));
+    rectangle.setFillColor(sf::Color::Transparent);
+    rectangle.setOutlineThickness(2.f);
+    mWindow->draw(rectangle);
+}
 
 Rect WindowManager::WindowToWorld(const Rect& rect) const {
     return Rect{WindowToWorld(rect.topLeft), WindowToWorld(rect.width), WindowToWorld(rect.height)};
@@ -51,7 +67,10 @@ void WindowManager::SetWorldScale(float worldUnitsPerPixel) {
     mWorldUnitsPerPixel = worldUnitsPerPixel;
 }
 
-void WindowManager::SetWorldRect(const Rect& worldCameraRect) {}
+void WindowManager::SetWorldRect(const Rect& worldCameraRect) {
+    mViewCenterWorld = worldCameraRect.topLeft + Point2D(worldCameraRect.width * 0.5f, worldCameraRect.height * 0.5f);
+    mWorldUnitsPerPixel = worldCameraRect.width / mWindow->getSize().x; 
+}
 
 float WindowManager::WindowToWorld(float x) const {
     return x * mWorldUnitsPerPixel;

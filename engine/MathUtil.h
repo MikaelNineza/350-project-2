@@ -19,8 +19,16 @@ struct Point2D {
     return os;
 }
 
+[[maybe_unused]] static Point2D operator*(const Point2D& lhs, float number) {
+    return Point2D(number * lhs.x, number * lhs.y);
+}
+
 [[maybe_unused]] static Point2D operator*(float number, const Point2D& rhs) {
     return Point2D(number * rhs.x, number * rhs.y);
+}
+
+[[maybe_unused]] static Point2D operator/(const Point2D& lhs, float number) {
+    return Point2D(lhs.x / number, lhs.y / number);
 }
 
 static Point2D operator*(const Point2D& a, const Point2D& b) {
