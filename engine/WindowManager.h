@@ -32,8 +32,12 @@ public:
     void DebugDrawRect(const Rect& r, int red, int green, int blue, int alpha = 255);
     void DebugFrameRect(const Rect& r, int red, int green, int blue, int alpha = 255);
 
+    Point2D GetWindowSize() const;
+
 private:
     std::shared_ptr<sf::RenderWindow> mWindow;
+    Point2D mViewCenterWorld;
+    float mWorldUnitsPerPixel;
 };
 
 }  // namespace ECSEngine
