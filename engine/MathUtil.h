@@ -1,6 +1,7 @@
 #ifndef MATHUTIL_H
 #define MATHUTIL_H
 
+#include <cassert>
 #include <iostream>
 
 namespace ECSEngine {
@@ -18,8 +19,34 @@ struct Point2D {
     return os;
 }
 
+[[maybe_unused]] static Point2D operator*(const Point2D& lhs, float number) {
+    return Point2D(number * lhs.x, number * lhs.y);
+}
+
 [[maybe_unused]] static Point2D operator*(float number, const Point2D& rhs) {
     return Point2D(number * rhs.x, number * rhs.y);
+}
+
+[[maybe_unused]] static Point2D operator/(const Point2D& lhs, float number) {
+    return Point2D(lhs.x / number, lhs.y / number);
+}
+
+static Point2D operator*(const Point2D& a, const Point2D& b) {
+    return Point2D(a.x * b.x, a.y * b.y);
+}
+
+static Point2D operator/(const Point2D& a, const Point2D& b) {
+    assert(b.x != 0);
+    assert(b.y != 0);
+    return Point2D(a.x / b.x, a.y / b.y);
+}
+
+static Point2D operator+(const Point2D& a, const Point2D& b) {
+    return Point2D(a.x + b.x, a.y + b.y);
+}
+
+static Point2D operator-(const Point2D& a, const Point2D& b) {
+    return Point2D(a.x - b.x, a.y - b.y);
 }
 
 struct Line {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <unordered_map>
 
 #include "MathUtil.h"
@@ -18,6 +19,8 @@ public:
     sf::Sprite& GetSprite(SpriteID id);
 
 private:
+    std::unordered_map<std::string, sf::Texture> mTextures;
+    std::vector<sf::Sprite> mSprites;
 };
 
 }  // namespace ECSEngine
