@@ -1,4 +1,5 @@
+#include "MathUtil.h"
+
 struct LocationComponent {
-    float x;
-    float y;
+    ECSEngine::Point2D loc;
 };

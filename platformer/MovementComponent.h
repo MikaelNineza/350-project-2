@@ -1,4 +1,5 @@
+#include "MathUtil.h"
+
 struct MovementComponent {
-    float vx;
-    float vy;
+    ECSEngine::Point2D velocity;
 };

@@ -1,36 +1,22 @@
-struct AABB {
-	float left = 0.f;
-	float right = 0.f;
-	float top = 0.f;
-	float bottom = 0.f;
-
-	float CenterX() {
-		return (left + right) * 0.5f;
-	}
-
-	float CenterY {
-		return (top + bottom) * 0.5f;
-	}
-
-	AABB Offset(float dx, float dy) {
-		return {left + dx, top + dy, right + dx, bottom + dy};
-	}
-};
+#include <cstdint>
+#include "MathUtil.h"
 
 struct CollisionComponent {
-	AABB bounds;		// current bounds in local coordiantes
-	AABB prevBbox;		// previous bounds
-	bool isStatic = true;	// is static (like a wall) or dynamic (like player)
-	bool isHazard = false;  // player dies upon contact with hazardous obj
-	bool left = false;	// all side flags indicate which side this object hit
-	bool right = false;
-	bool top = false;
-	bool bottom = false;
-	bool sliding = false;	// sliding against a wall and falling
+	CollisionComponent() : staticEntity(0), doesDamage(0), onGround(0), onCeiling(0), onLeftWall(0), onRightWall(0), wallSliding(0) {
+	}
+	uint8_t staticEntity : 1;
+	uint8_t doesDamage : 1;
+	uint8_t onGround : 1;
+	uint8_t onCeiling : 1;
+	uint8_t onLeftWall : 1;
+	uint8_t onRightWall : 1;
+	uint8_t wallSliding : 1;
+	ECSEngine::Rect collisionBox{};
+	ECSEngine::Rect prevCollisionBox{};
 	void ClearSides() {
-		left = false;
-		right = false;
-		top = false;
-		bottom = false;
+		onCeiling = 0;
+		onGround = 0;
+		onLeftWall = 0;
+		onRightWall = 0;
 	}
 };

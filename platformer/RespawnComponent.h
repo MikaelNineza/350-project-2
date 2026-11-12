@@ -1,4 +1,4 @@
+#include "MathUtil.h"
 struct RespawnComponent {
-    float x;
-    float y;
+    ECSEngine::Point2D loc;
 };
