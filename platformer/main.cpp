@@ -149,8 +149,8 @@ int main(int argc, char* argv[]) {
     // Load sounds
     auto &soundManager = engine.GetSoundManager();
     soundManager.RegisterSound(gResourcePath + "sfx_jump.ogg", "Jump Sound");
-    soundManager.RegisterSound(gResourcePath + "footstep_grass_003.ogg", "Landing Sound");
-    soundManager.RegisterSound(gResourcePath + "sfx_gem.ogg", "Collect Star Sound");
+    soundManager.RegisterSound(gResourcePath + "footstep_grass_003.ogg", "landing sound");
+    soundManager.RegisterSound(gResourcePath + "sfx_gem.ogg", "collect star");
     soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "Push Wall Sound");
 
     // Load maps
@@ -170,7 +170,7 @@ int main(int argc, char* argv[]) {
     spriteComp.bounds = ECSEngine::Rect{ECSEngine::Point2D(0, 0), 64, 64};
     spriteComp.worldSpace = true;
     em.AddComponent(playerID, spriteComp);
-    em.AddComponent(playerID, ECSEngine::GravityComponent(ECSEngine::Point2D(0.f, 1.f)));
+    em.AddComponent(playerID, ECSEngine::GravityComponent(ECSEngine::Point2D(0.f, 1000.f)));
     em.AddComponent(playerID, ECSEngine::InputComponent(playerID));
     em.AddComponent(playerID, ECSEngine::LocationComponent{playerSpawn});
     em.AddComponent(playerID, ECSEngine::MovementComponent{ECSEngine::Point2D(0.f, 0.f)});
