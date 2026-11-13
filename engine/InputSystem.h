@@ -86,7 +86,7 @@ public:
                 else if (onWall && falling) {
                     mov.velocity.y = -kWallJumpVelocityY;
                     mov.velocity.x = col.onLeftWall ? kWallJumpVelocityX : -kWallJumpVelocityX; // go the opposite direction to the wall
-                    engine->GetSoundManager().GetSound("Push Wall Sound").play();
+                    engine->GetSoundManager().GetSound("push wall").play();
                 }
             }
 

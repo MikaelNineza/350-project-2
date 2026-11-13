@@ -59,7 +59,6 @@ public:
             Rect softLimit = camera.softExclusion;
             Rect hardLimit = camera.hardExclusion;
             float playerX = 0;
-            float playerY = 0;
 
             // Obtain change in x
             if (playerCenterWindow.x < hardLimit.topLeft.x) {
@@ -72,18 +71,7 @@ public:
                 playerX = camera.speed * (playerCenterWindow.x - (softLimit.topLeft.x + softLimit.width));
             }
 
-            // Obtain change in y
-            if (playerCenterWindow.y < hardLimit.topLeft.y) {
-                playerY = playerCenterWindow.y - hardLimit.topLeft.y;
-            } else if (playerCenterWindow.y > (hardLimit.topLeft.y + hardLimit.height)) {
-                playerY = playerCenterWindow.y - (hardLimit.topLeft.y + hardLimit.height);
-            } else if (playerCenterWindow.y < softLimit.topLeft.y) {
-                playerY = camera.speed * (playerCenterWindow.y - softLimit.topLeft.y);
-            } else if (playerCenterWindow.y > (softLimit.topLeft.y + softLimit.height)) {
-                playerY = camera.speed * (playerCenterWindow.y - (softLimit.topLeft.y + softLimit.height));
-            }
-
-            camera.position = camera.position + Point2D(playerX, playerY) * camera.worldUnitsPerPixel;
+            camera.position = camera.position + Point2D(playerX, 0.0f) * camera.worldUnitsPerPixel;
             wm.SetWorldScale(camera.worldUnitsPerPixel);
             wm.SetWorldCenter(camera.position);
 

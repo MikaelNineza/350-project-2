@@ -153,7 +153,7 @@ int main(int argc, char* argv[]) {
     soundManager.RegisterSound(gResourcePath + "sfx_jump.ogg", "jump");
     soundManager.RegisterSound(gResourcePath + "footstep_grass_003.ogg", "landing sound");
     soundManager.RegisterSound(gResourcePath + "sfx_gem.ogg", "collect star");
-    soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "z");
+    soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "push wall");
 
     // Load maps
     ECSEngine::Rect temp;
@@ -217,6 +217,7 @@ int main(int argc, char* argv[]) {
     ECSEngine::EntityID cameraID = em.CreateEntity("camera");
     ECSEngine::CameraComponent camera{};
     camera.position = playerSpawn;
+    camera.position.y = 450;
     camera.worldUnitsPerPixel = 1;
     camera.hardExclusion = ECSEngine::Rect{ECSEngine::Point2D(width * 0.1f), width * 0.8f, height};
     camera.softExclusion = ECSEngine::Rect{ECSEngine::Point2D(width * 0.3f), width * 0.4f, height};
