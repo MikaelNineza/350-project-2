@@ -10,17 +10,20 @@
 #include "MathUtil.h"
 #include "ECSEngine.h"
 #include "CollisionComponent.h"
-#include "MovementComponent.h"
 #include "LocationComponent.h"
 #include "InputComponent.h"
 #include "CameraShakeComponent.h"
 #include "ScoreComponent.h"
-#include "RespawnComponent.h"
 
 namespace ECSEngine {
 	template <typename... Components>
 	class CollisionSystem : public System<Components...> {
 	public:
+		const std::string& GetName() const override {
+			static std::string name("CollisionSystem");
+			return name;
+		}
+
 		tSystemReturn Run(EngineView<Components...>* engine) override {
 			auto &em = engine->GetEntityManager();
 			GetEntities(em);
@@ -39,10 +42,6 @@ namespace ECSEngine {
 			}
 
 			return kContinue;
-		}
-
-		const std::string &GetName() const override {
-			return mName;
 		}
 	private:
 		using tEntityManager = EntityManager<Components...>;
@@ -223,7 +222,6 @@ namespace ECSEngine {
 				loc.loc = respawn.loc;
 				mov.velocity = Point2D(0.f, 0.f);
 				col.ClearSides();
-				col.wallSliding = false;
 				return;
 			}
 

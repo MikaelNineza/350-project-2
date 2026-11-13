@@ -1,4 +1,9 @@
+#pragma once
+
 #include "MathUtil.h"
-struct RespawnComponent {
-    ECSEngine::Point2D loc;
-};
+
+namespace ECSEngine {
+    struct RespawnComponent {
+        Point2D loc;
+    };
+}
