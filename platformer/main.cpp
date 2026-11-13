@@ -6,12 +6,15 @@
 #include "CollisionSystem.h"
 #include "ECSEngine.h"
 #include "EntityManager.h"
+#include "GravityComponent.h"
 #include "GravitySystem.h"
 #include "InputComponent.h"
 #include "InputSystem.h"
 #include "LocationComponent.h"
 #include "MathUtil.h"
+#include "MovementComponent.h"
 #include "MovementSystem.h"
+#include "RespawnComponent.h"
 #include "ScoreComponent.h"
 #include "ScoreSystem.h"
 #include "SpawnComponent.h"
@@ -41,6 +44,11 @@ int main(int argc, char* argv[]) {
     Engine engine(1024, 768, "Test Engine");
 
     // Load sounds
+    auto &soundManager = engine.GetSoundManager();
+    soundManager.RegisterSound("./assets/sfx_jump.ogg", "Jump Sound");
+    soundManager.RegisterSound("./assets/footstep_grass_003.ogg", "Landing Sound");
+    soundManager.RegisterSound("./assets/sfx_gem.ogg", "Collect Star Sound");
+    soundManager.RegisterSound("./assets/footstep_snow_001.ogg", "Push Wall Sound");
 
     // Load maps
 

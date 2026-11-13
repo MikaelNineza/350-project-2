@@ -12,7 +12,9 @@
 #include "CollisionComponent.h"
 #include "LocationComponent.h"
 #include "InputComponent.h"
-#include "CameraShakeComponent.h"
+#include "CameraComponent.h"
+#include "MovementComponent.h"
+#include "RespawnComponent.h"
 #include "ScoreComponent.h"
 
 namespace ECSEngine {
@@ -124,12 +126,12 @@ namespace ECSEngine {
 			float xVelo = mov.velocity.x;
 			float yVelo = mov.velocity.y;
 
-			col.ClearSides();
+			ClearSides(col);
 
 			bool takeDamage = false;
 
 			// previous collision box as AABB
-			AABB prevBounds = RectToAABB(col.prevCollisionBox);
+			AABB prevBounds = RectToAABB(col.previousCollisionBox);
 
 			// current collision box as AABB (location added)
 			AABB currBounds = WorldBox(em, id);
@@ -221,7 +223,7 @@ namespace ECSEngine {
 				auto &respawn = em.template GetComponent<RespawnComponent>(id);
 				loc.loc = respawn.loc;
 				mov.velocity = Point2D(0.f, 0.f);
-				col.ClearSides();
+				ClearSides(col);
 				return;
 			}
 
@@ -294,8 +296,15 @@ namespace ECSEngine {
 			return a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 		}
 
+		static void ClearSides(CollisionComponent &col) {
+			col.onCeiling = 0;
+			col.onGround = 0;
+			col.onLeftWall = 0;
+			col.onRightWall = 0;
+		}
+
 		void Shake(tEntityManager &em, float xVelo, float yVelo) {
-			auto &shake = em.template GetComponent<CameraShakeComponent>(mShakeEntity);
+			auto &shake = em.template GetComponent<CameraShake>(mShakeEntity);
 			shake.frameLimit = 6; // change later / test values
 			float shakeScale = 1.f / 60.f; // change later / test values
 			shake.offset.x = xVelo * shakeScale;
@@ -311,7 +320,7 @@ namespace ECSEngine {
 
 			for (const auto &entity : em) {
 				EntityID id = entity.GetID();
-				if (em.template HasComponent<CameraShakeComponent>(id)) {
+				if (em.template HasComponent<CameraShake>(id)) {
 					mShakeEntity = id;
 				}
 				if (em.template HasComponent<ScoreComponent>(id)) {
