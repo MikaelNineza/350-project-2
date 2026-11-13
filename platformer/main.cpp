@@ -183,7 +183,29 @@ int main(int argc, char* argv[]) {
     em.AddComponent(playerID, collision);
 
     // Setup score component
+    ECSEngine::EntityID scoreID = em.CreateEntity("score");
+    ECSEngine::ScoreComponent scoreComp{};
+    scoreComp.score = 0;
+    for (int i = 0; i < 10; ++i) {
+        temp.topLeft = {832, 832 - i * 64};
+        scoreComp.digitTextureID[i] = sManager.RegisterTexture(gResourcePath + "spritesheet-tiles-default.png", temp);
+    }
 
+    for (int i = 0; i < 3; ++i) {
+        ECSEngine::EntityID digitID = em.CreateEntity("digit");
+        ECSEngine::Point2D temp2(i * 64 + 10, 10);
+        em.AddComponent(digitID, ECSEngine::LocationComponent{temp2});
+
+        ECSEngine::SpriteComponent dSprite;
+        dSprite.textureID = scoreComp.digitTextureID[0];
+        dSprite.bounds = ECSEngine::Rect{ECSEngine::Point2D(0.f, 0.f), 64, 64};
+        dSprite.worldSpace = false;
+        em.AddComponent(digitID, dSprite);
+
+        scoreComp.digitID[i] = digitID;
+    }
+
+    em.AddComponent(scoreID, scoreComp);
 
     // Setup Camera
     float width = engine.GetWindowManager().GetWindowSize().x;
