@@ -12,16 +12,16 @@
 
 namespace ECSEngine {
 
-const float kMaxRunVelocity = 15;
-const float kDashVelocity = 50;
-const float kJumpVelocity = 25;
-const float kGroundRunAcceleration = 5;
-const float kAirRunAcceleration = 4;
-const float kDashInterval = 25;
-const float kWallJumpVelocityY = 5;
-const float kWallJumpVelocityX = 20;
-const float kJumpReleaseAcceleration = 5;
-const float kDownHeldFallAcceleration = 5;
+const float kMaxRunVelocity = 900;
+const float kDashVelocity = 1500;
+const float kJumpVelocity = 800;
+const float kGroundRunAcceleration = 60;
+const float kAirRunAcceleration = 30;
+const float kDashInterval = 60;
+const float kWallJumpVelocityY = 300;
+const float kWallJumpVelocityX = 120;
+const float kJumpReleaseAcceleration = 50;
+const float kDownHeldFallAcceleration = 50;
 
 template <typename... Components>
 class InputSystem : public System<Components...> {
@@ -86,7 +86,7 @@ public:
                 else if (onWall && falling) {
                     mov.velocity.y = -kWallJumpVelocityY;
                     mov.velocity.x = col.onLeftWall ? kWallJumpVelocityX : -kWallJumpVelocityX; // go the opposite direction to the wall
-                    engine->GetSoundManager().GetSound("jump").play();
+                    engine->GetSoundManager().GetSound("Push Wall Sound").play();
                 }
             }
 

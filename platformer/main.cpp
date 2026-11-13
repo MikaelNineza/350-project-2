@@ -150,10 +150,10 @@ int main(int argc, char* argv[]) {
     auto &sManager = engine.GetSpriteManager();
     // Load sounds
     auto &soundManager = engine.GetSoundManager();
-    soundManager.RegisterSound(gResourcePath + "sfx_jump.ogg", "Jump Sound");
+    soundManager.RegisterSound(gResourcePath + "sfx_jump.ogg", "jump");
     soundManager.RegisterSound(gResourcePath + "footstep_grass_003.ogg", "landing sound");
     soundManager.RegisterSound(gResourcePath + "sfx_gem.ogg", "collect star");
-    soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "Push Wall Sound");
+    soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "z");
 
     // Load maps
     ECSEngine::Rect temp;
