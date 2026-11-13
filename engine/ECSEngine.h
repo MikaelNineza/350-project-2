@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <optional>
+#include <string>
 
 #include "CameraComponent.h"
 #include "CollisionComponent.h"
@@ -91,17 +93,17 @@ bool ECSEngine<Components...>::ProcessEvents() {
     while (const std::optional event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
             window->close();
-            return true;
+            return false;
         }
 
         const auto* keyDown = event ->getIf<sf::Event::KeyPressed>();
         const auto* keyUp = event ->getIf<sf::Event::KeyReleased>();
 
-        if (!keyDown || !keyUp) {
+        if (!keyDown && !keyUp) {
             continue;
         }
 
-        auto code = keyDown ? keyDown->scanCode : keyUp->scanCode;
+        auto code = keyDown ? keyDown->scancode : keyUp->scancode;
 
         for (auto &entity : mEntityManager) {
             EntityID id = entity.GetID();
@@ -111,6 +113,8 @@ bool ECSEngine<Components...>::ProcessEvents() {
             }
         }
     }
+
+    return window->isOpen();
 }
 
 template <typename... Components>

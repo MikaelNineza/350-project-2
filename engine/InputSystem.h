@@ -33,7 +33,6 @@ public:
 
     tSystemReturn Run(EngineView<Components...>* engine) override {
         auto &em = engine->GetEntityManager();
-        EntityID player;
         for (auto &entity : em) {
             EntityID id = entity.GetID();
             if (!em.template HasComponent<InputComponent>(id)) {
