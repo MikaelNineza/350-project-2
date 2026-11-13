@@ -5,6 +5,7 @@
 #include "CollisionComponent.h"
 #include "CollisionLateSystem.h"
 #include "CollisionSystem.h"
+#include "CollisionSystemUpdate.h"
 #include "ECSEngine.h"
 #include "EntityManager.h"
 #include "GravityComponent.h"
@@ -128,6 +129,7 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
                 }
                 collision.collisionBox = info.bounds;
                 collision.previousCollisionBox = info.bounds;
+                collision.previousCollisionBox.topLeft = info.bounds.topLeft + pos;
                 em.AddComponent(entity, collision);
             }
         }
@@ -180,6 +182,7 @@ int main(int argc, char* argv[]) {
     collision.staticEntity = 0;
     collision.collisionBox = ECSEngine::Rect{ECSEngine::Point2D(0.f, 0.f), 64, 64};
     collision.previousCollisionBox = collision.collisionBox;
+    collision.previousCollisionBox.topLeft = collision.collisionBox.topLeft + playerSpawn;
     em.AddComponent(playerID, collision);
 
     // Setup score component
@@ -224,7 +227,7 @@ int main(int argc, char* argv[]) {
 
     // Add all systems
     auto& sm = engine.GetSystemManager();
-    sm.AddSystem(std::make_unique<ECSEngine::CollisionLateSystem<COMPONENTS>>());
+    sm.AddSystem(std::make_unique<ECSEngine::CollisionSystemUpdate<COMPONENTS>>());
     sm.AddSystem(std::make_unique<ECSEngine::InputSystem<COMPONENTS>>());
     sm.AddSystem(std::make_unique<ECSEngine::GravitySystem<COMPONENTS>>());
     sm.AddSystem(std::make_unique<ECSEngine::MovementSystem<COMPONENTS>>());

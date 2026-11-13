@@ -74,6 +74,7 @@ public:
             col.staticEntity = 0;
             col.collisionBox = item.bounds;
             col.previousCollisionBox = item.bounds;
+            col.previousCollisionBox.topLeft = item.bounds.topLeft + item.spawnLoc;
             em.AddComponent(star, col);
 
             SpriteComponent sprite;
