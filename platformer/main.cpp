@@ -180,7 +180,10 @@ int main(int argc, char* argv[]) {
 
     ECSEngine::CollisionComponent collision{};
     collision.staticEntity = 0;
-    collision.collisionBox = ECSEngine::Rect{ECSEngine::Point2D(0.f, 0.f), 64, 64};
+
+    // The values for this box were chosen from Prompt #2 (see readme)
+    collision.collisionBox = ECSEngine::Rect{ECSEngine::Point2D(12.f, 8.f), 40, 56};
+    
     collision.previousCollisionBox = collision.collisionBox;
     collision.previousCollisionBox.topLeft = collision.collisionBox.topLeft + playerSpawn;
     em.AddComponent(playerID, collision);
