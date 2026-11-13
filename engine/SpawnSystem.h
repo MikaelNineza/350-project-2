@@ -27,8 +27,8 @@ public:
                 continue;
             }
 
-            EntityID entity = spawnComp.entityID;
-            if (!em.template HasComponent<LocationComponent>(entity)) {
+            EntityID entity2 = spawnComp.entityID;
+            if (!em.template HasComponent<LocationComponent>(entity2)) {
                 continue;
             }
 

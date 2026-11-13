@@ -6,8 +6,10 @@
 #include "Entity.h"
 #include "LocationComponent.h"
 #include "CollisionComponent.h"
+#include "GravityComponent.h"
 #include "InputComponent.h"
 #include "ECSEngine.h"
+#include "MovementComponent.h"
 
 namespace ECSEngine
 {
