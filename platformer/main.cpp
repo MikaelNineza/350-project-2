@@ -1,4 +1,5 @@
 #include <fstream>
+#include <unordered_map>
 
 #include "CameraSystem.h"
 #include "CollisionComponent.h"
@@ -31,7 +32,42 @@ std::string gResourcePath = "../assets/";
         ECSEngine::CameraShake, ECSEngine::ScoreComponent, ECSEngine::RespawnComponent
 using Engine = ECSEngine::ECSEngine<COMPONENTS>;
 
-void LoadMap(Engine& engine, const std::string& path, const std::string& file) {}
+struct LineInfo {
+    std::string path;
+    ECSEngine::Rect spriteLoc;
+    ECSEngine::Rect bounds;
+};
+
+void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
+    std::string fullPath = path + file;
+    // https://www.learncpp.com/cpp-tutorial/basic-file-io/
+    std::ifstream inf{ fullPath };
+
+    if (!inf) {
+        std::cerr << "Could not load in a map file\n";
+        return;
+    }
+
+    std::string nextWord;
+    std::unordered_map<std::string, LineInfo> readLines;
+    int type;
+    inf >> nextWord >> type;
+
+    while (inf >> nextWord) {
+        if (nextWord == "map") {
+            break;
+        }
+
+        LineInfo line;
+        std::string key = nextWord;
+        std::string texturePath;
+        inf >> texturePath >> line.spriteLoc.topLeft.x >> line.spriteLoc.topLeft.y >> line.spriteLoc.width >> line.spriteLoc.height;
+        if (type == 2) {
+            inf >> line.bounds.topLeft.x >> line.bounds.topLeft.y >> line.bounds.width >> line.bounds.height;
+        }
+        readLines[key] = line;
+    }
+}
 
 int main(int argc, char* argv[]) {
     if (argc >= 3 && argv[1] == std::string("-path")) {
