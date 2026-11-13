@@ -65,17 +65,52 @@ private:
 template <typename... Components>
 ECSEngine<Components...>::ECSEngine(unsigned int width, unsigned int height,
                                     const std::string& name)
-    : mWindowManager(width, height, name) {}
+    : mWindowManager(width, height, name) {
+    mWindowManager.GetWindow()->setFramerateLimit(60);
+}
 
 template <typename... Components>
-ECSEngine<Components...>::~ECSEngine() {}
+ECSEngine<Components...>::~ECSEngine() {
+    mWindowManager.GetWindow()->close();
+}
 
 template <typename... Components>
-void ECSEngine<Components...>::Run() {}
+void ECSEngine<Components...>::Run() {
+    while (ProcessEvents()) {
+        if (!mSystemManager.Run(this)) {
+            break;
+        }
+        mWindowManager.GetWindow()->display();
+    }
+}
 
 template <typename... Components>
 bool ECSEngine<Components...>::ProcessEvents() {
-    return true;
+    auto window = mWindowManager.GetWindow();
+
+    while (const std::optional event = window->pollEvent()) {
+        if (event->is<sf::Event::Closed>()) {
+            window->close();
+            return true;
+        }
+
+        const auto* keyDown = event ->getIf<sf::Event::KeyPressed>();
+        const auto* keyUp = event ->getIf<sf::Event::KeyReleased>();
+
+        if (!keyDown || !keyUp) {
+            continue;
+        }
+
+        auto code = keyDown ? keyDown->scanCode : keyUp->scanCode;
+
+        for (auto &entity : mEntityManager) {
+            EntityID id = entity.GetID();
+            if (mEntityManager.template HasComponent<InputComponent>(id)) {
+                auto &input = mEntityManager.template GetComponent<InputComponent>(id);
+                input.keydown[static_cast<std::size_t>(code)] = keyDown != nullptr;
+            }
+        }
+    }
 }
 
 template <typename... Components>
