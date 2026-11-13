@@ -1,5 +1,9 @@
+#pragma once
+
 #include "MathUtil.h"
 
-struct MovementComponent {
-    ECSEngine::Point2D velocity;
-};
+namespace ECSEngine {
+    struct MovementComponent {
+        Point2D velocity;  // Velocity in pixels per second
+    };
+}
