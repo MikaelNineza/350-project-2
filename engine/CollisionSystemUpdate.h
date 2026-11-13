@@ -24,6 +24,7 @@ namespace ECSEngine {
                     continue;
                 }
 
+
                 auto &loc = em.template GetComponent<LocationComponent>(id);
                 col.prevCollisionBox = col.collisionBox;
                 col.prevCollisionBox.topLeft += loc.loc; // location is top left

@@ -1,7 +1,18 @@
 #pragma once
 
+#include <random>
+#include <string>
+#include <vector>
+
+#include "Entity.h"
+#include "MathUtil.h"
+#include "SystemManager.h"
 #include "LocationComponent.h"
 #include "SpawnComponent.h"
+#include "SpriteComponent.h"
+#include "MovementComponent.h"
+#include "GravityComponent.h"
+#include "CollisionComponent.h"
 
 namespace ECSEngine {
 
@@ -15,7 +26,7 @@ public:
 
     tSystemReturn Run(EngineView<Components...>* engine) override {
         auto &em = engine->GetEntityManager();
-        std::vector<SpriteID> newEntities; //TODO: Figure out what should be the type of this
+        std::vector<SpawnItem> spawnItems;
         for (const auto &entity : em) {
             EntityID id = entity.GetID();
             if (!em.template HasComponent<SpawnComponent>(id)) {
@@ -27,27 +38,58 @@ public:
                 continue;
             }
 
-            EntityID entity = spawnComp.entityID;
-            if (!em.template HasComponent<LocationComponent>(entity)) {
+            if (!em.template HasComponent<LocationComponent>(id) ||
+                !em.template HasComponent<SpriteComponent>(id)) {
                 continue;
             }
 
             spawnComp.timeToNextSpawn -= 1;
-            if (spawnComp.timeToNextSpawn) {
+            if (spawnComp.timeToNextSpawn > 0) {
                 continue;
             }
 
-            //TODO: add info for what will be spawn to the vector
-
             spawnComp.totalSpawns -= 1;
             spawnComp.timeToNextSpawn = spawnComp.timeBetweenSpawns;
+
+            SpawnItem item;
+            item.spawnType = spawnComp.spawnType;
+            item.textureID = spawnComp.spawnTextureID;
+            item.spawnLoc = em.template GetComponent<LocationComponent>(id).loc;
+            item.bounds = em.template GetComponent<SpriteComponent>(id).bounds;
         }
 
-        //TODO: iterate over vector and create entities
+        for (const SpawnItem &item : spawnItems) {
+            EntityID star = em.CreateEntity(item.spawnType);
+            float dir = (mRandom() % 2) ? 1.f : -1.f;
+            
+            em.AddComponent(star, LocationComponent{item.spawnLoc});
+            em.AddComponent(star, MovementComponent{Point2D(dir * kStarVeloX, 0.f)});
+            em.AddComponent(star, GravityComponent(Point2D(0.f, kStarGravity)));
 
+            CollisionComponent col;
+            col.collisionBox = item.bounds;
+            em.AddComponent(star, col);
+
+            SpriteComponent sprite;
+            sprite.textureID = item.spawnTextureID;
+            sprite.bounds = item.bounds;
+            sprite.worldSpace = true;
+            em.AddComponent(star, sprite);
+        }
 
         return kContinue;
     }
+private:
+    static constexpr float kStarVeloX = 10.f;
+    static constexpr float kStarGravity = 2.f;
+    std::mt19937 mRandom;
+
+    struct SpawnItem {
+        Point2D spawnLoc;
+        std::string spawnType;
+        SpriteID textureID;
+        Rect bounds;
+    };
 };
 
 }  // namespace ECSEngine
