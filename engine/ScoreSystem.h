@@ -18,6 +18,9 @@ public:
 
         for (const auto &entity : em) {
             EntityID id = entity.GetID();
+            if (!em.ValidEntity(id)) {
+					continue;
+			}
             if (!em.template HasComponent<ScoreComponent>(id)) {
                 continue;
             }
@@ -29,6 +32,9 @@ public:
             int digits[3] = {sComponent.score / 100, (sComponent.score / 10) % 10, sComponent.score % 10};
             for (int i = 0; i < 3; ++i) {
                 EntityID digitID = sComponent.digitID[i];
+                if (!em.ValidEntity(digitID)) {
+					continue;
+			    }
                 if (!em.template HasComponent<SpriteComponent>(digitID)) {
                     continue;
                 }

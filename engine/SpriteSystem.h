@@ -30,6 +30,9 @@ public:
 
         for (const auto &entity : em) {
             EntityID id = entity.GetID();
+            if (!em.ValidEntity(id)) {
+					continue;
+			}
             if (!em.template HasComponent<SpriteComponent>(id)) {
                 continue;
             }

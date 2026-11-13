@@ -35,6 +35,9 @@ public:
         auto &em = engine->GetEntityManager();
         for (auto &entity : em) {
             EntityID id = entity.GetID();
+            if (!em.ValidEntity(id)) {
+					continue;
+			}
             if (!em.template HasComponent<InputComponent>(id)) {
                 continue;
             }

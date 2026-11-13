@@ -25,6 +25,9 @@ public:
         auto &wm = engine->GetWindowManager();
         for (const auto &entity : em) {
             EntityID id = entity.GetID();
+            if (!em.ValidEntity(id)) {
+					continue;
+			}
             if (!em.template HasComponent<CameraComponent>(id)) {
                 continue;
             }
@@ -33,7 +36,9 @@ public:
             }
 
             EntityID follower = em.template GetComponent<CameraFollower>(id).entityID;
-
+            if (!em.ValidEntity(follower)) {
+					continue;
+			}
             if (!em.template HasComponent<LocationComponent>(follower)) {
                 continue;
             }

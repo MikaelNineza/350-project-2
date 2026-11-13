@@ -29,6 +29,9 @@ public:
         std::vector<SpawnItem> spawnItems;
         for (const auto &entity : em) {
             EntityID id = entity.GetID();
+            if (!em.ValidEntity(id)) {
+					continue;
+			}
             if (!em.template HasComponent<SpawnComponent>(id)) {
                 continue;
             }
@@ -84,7 +87,7 @@ public:
     }
 private:
     static constexpr float kStarVeloX = 10.f;
-    static constexpr float kStarGravity = 2.f;
+    static constexpr float kStarGravity = 1000.f;
     std::mt19937 mRandom;
 
     struct SpawnItem {

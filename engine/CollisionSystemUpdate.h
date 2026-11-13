@@ -15,6 +15,9 @@ namespace ECSEngine {
             auto &em = engine->GetEntityManager();
             for (const auto &entity : em) {
                 EntityID id = entity.GetID();
+                if (!em.ValidEntity(id)) {
+					continue;
+			    }
                 if (!em.template HasComponent<CollisionComponent>(id)) {
                     continue;
                 }
