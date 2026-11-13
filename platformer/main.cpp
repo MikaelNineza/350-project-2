@@ -38,6 +38,9 @@ struct LineInfo {
     ECSEngine::SpriteID spriteID;
 };
 
+ECSEngine::Point2D playerSpawn;
+ECSEngine::SpriteID starSprite;
+
 void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
     auto &em = engine.GetEntityManager();
     auto &sm = engine.GetSpriteManager();
@@ -87,10 +90,34 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
             }
 
             LineInfo &info = readLines[std::string{chr}];
-            ECSEngine::EntityID entity = em.CreateEntity(std::string{chr});
             ECSEngine::Point2D pos(x * tile.x + topLeft.x, y * tile.y + topLeft.y);
-
+            
+            if (chr == 'o') {
+                playerSpawn = pos;
+                continue;
+            }
+            
+            ECSEngine::EntityID entity = em.CreateEntity(std::string{chr});
             em.AddComponent(entity, ECSEngine::LocationComponent{pos});
+            
+            ECSEngine::SpriteComponent spriteComp;
+            spriteComp.textureID = info.spriteID;
+            spriteComp.bounds = ECSEngine::Rect{ECSEngine::Point2D(0, 0), tile.x, tile.y};
+            spriteComp.worldSpace = true;
+            em.AddComponent(entity, spriteComp);
+
+            if (chr == 'S') {
+                ECSEngine::SpawnComponent spawnComponent;
+                spawnComponent.entityID = entity;
+                spawnComponent.spawnType = "star";
+                spawnComponent.spawnTextureID = starSprite;
+                spawnComponent.timeToNextSpawn = 120;
+                spawnComponent.timeBetweenSpawns = 120;
+                spawnComponent.totalSpawns = 5;
+                em.AddComponent(entity, spawnComponent);
+                continue;
+            }
+
             if (type == 2) {
                 ECSEngine::CollisionComponent collision{};
                 collision.staticEntity = 1;
@@ -103,12 +130,6 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
                 collision.previousCollisionBox = info.bounds;
                 em.AddComponent(entity, collision);
             }
-
-            ECSEngine::SpriteComponent spriteComp;
-            spriteComp.textureID = info.spriteID;
-            spriteComp.bounds = ECSEngine::Rect{ECSEngine::Point2D(0, 0), tile.x, tile.y};
-            spriteComp.worldSpace = true;
-            em.AddComponent(entity, spriteComp);
         }
     }
 
@@ -123,7 +144,8 @@ int main(int argc, char* argv[]) {
 
     // Engine test code
     Engine engine(1024, 768, "Test Engine");
-
+    auto &em = engine.GetEntityManager();
+    auto &sManager = engine.GetSpriteManager();
     // Load sounds
     auto &soundManager = engine.GetSoundManager();
     soundManager.RegisterSound(gResourcePath + "sfx_jump.ogg", "Jump Sound");
@@ -132,14 +154,51 @@ int main(int argc, char* argv[]) {
     soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "Push Wall Sound");
 
     // Load maps
+    ECSEngine::Rect temp;
+    temp.topLeft = {10 * 64, 5 * 64};
+    temp.width = 64;
+    temp.height = 64;
+    starSprite = sManager.RegisterTexture(gResourcePath + "spritesheet-tiles-default.png", temp);
     LoadMap(engine, gResourcePath, "sky.map");
     LoadMap(engine, gResourcePath, "world.map");
 
     // Place player
+    ECSEngine::EntityID playerID = em.CreateEntity("player");
+    ECSEngine::SpriteComponent spriteComp;
+    ECSEngine::SpriteID pSprite = sManager.RegisterTexture(gResourcePath + "spritesheet-characters-default.png", ECSEngine::Rect{ECSEngine::Point2D(0, 0), 128, 128});
+    spriteComp.textureID = pSprite;
+    spriteComp.bounds = ECSEngine::Rect{ECSEngine::Point2D(0, 0), 64, 64};
+    spriteComp.worldSpace = true;
+    em.AddComponent(playerID, spriteComp);
+    em.AddComponent(playerID, ECSEngine::GravityComponent(ECSEngine::Point2D(0.f, 1.f)));
+    em.AddComponent(playerID, ECSEngine::InputComponent(playerID));
+    em.AddComponent(playerID, ECSEngine::LocationComponent{playerSpawn});
+    em.AddComponent(playerID, ECSEngine::MovementComponent{ECSEngine::Point2D(0.f, 0.f)});
+    em.AddComponent(playerID, ECSEngine::RespawnComponent{playerSpawn});
+
+    ECSEngine::CollisionComponent collision{};
+    collision.staticEntity = 0;
+    collision.collisionBox = ECSEngine::Rect{ECSEngine::Point2D(0.f, 0.f), 64, 64};
+    collision.previousCollisionBox = collision.collisionBox;
+    em.AddComponent(playerID, collision);
 
     // Setup score component
 
+
     // Setup Camera
+    float width = engine.GetWindowManager().GetWindowSize().x;
+    float height = engine.GetWindowManager().GetWindowSize().y;
+
+    ECSEngine::EntityID cameraID = em.CreateEntity("camera");
+    ECSEngine::CameraComponent camera{};
+    camera.position = playerSpawn;
+    camera.worldUnitsPerPixel = 1;
+    camera.hardExclusion = ECSEngine::Rect{ECSEngine::Point2D(width * 0.1f), width * 0.8f, height};
+    camera.softExclusion = ECSEngine::Rect{ECSEngine::Point2D(width * 0.3f), width * 0.4f, height};
+    camera.speed = 0.1f;
+    em.AddComponent(cameraID, camera);
+    em.AddComponent(cameraID, ECSEngine::CameraFollower{playerID});
+    em.AddComponent(cameraID, ECSEngine::CameraShake{0, ECSEngine::Point2D(0, 0)});
 
     // Add all systems
     auto& sm = engine.GetSystemManager();
