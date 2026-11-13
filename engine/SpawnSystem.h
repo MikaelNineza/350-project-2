@@ -56,6 +56,7 @@ public:
             item.textureID = spawnComp.spawnTextureID;
             item.spawnLoc = em.template GetComponent<LocationComponent>(id).loc;
             item.bounds = em.template GetComponent<SpriteComponent>(id).bounds;
+            spawnItems.push_back(item);
         }
 
         for (const SpawnItem &item : spawnItems) {
@@ -66,12 +67,14 @@ public:
             em.AddComponent(star, MovementComponent{Point2D(dir * kStarVeloX, 0.f)});
             em.AddComponent(star, GravityComponent(Point2D(0.f, kStarGravity)));
 
-            CollisionComponent col;
+            CollisionComponent col{};
+            col.staticEntity = 0;
             col.collisionBox = item.bounds;
+            col.previousCollisionBox = item.bounds;
             em.AddComponent(star, col);
 
             SpriteComponent sprite;
-            sprite.textureID = item.spawnTextureID;
+            sprite.textureID = item.textureID;
             sprite.bounds = item.bounds;
             sprite.worldSpace = true;
             em.AddComponent(star, sprite);
