@@ -82,7 +82,6 @@ void ECSEngine<Components...>::Run() {
         if (!mSystemManager.Run(this)) {
             break;
         }
-        mWindowManager.GetWindow()->display();
     }
 }
 
@@ -107,6 +106,9 @@ bool ECSEngine<Components...>::ProcessEvents() {
 
         for (auto &entity : mEntityManager) {
             EntityID id = entity.GetID();
+            if (!mEntityManager.ValidEntity(id)) {
+					continue;
+			}
             if (mEntityManager.template HasComponent<InputComponent>(id)) {
                 auto &input = mEntityManager.template GetComponent<InputComponent>(id);
                 input.keydown[static_cast<std::size_t>(code)] = keyDown != nullptr;

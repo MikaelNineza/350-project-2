@@ -320,6 +320,9 @@ namespace ECSEngine {
 
 			for (const auto &entity : em) {
 				EntityID id = entity.GetID();
+				if (!em.ValidEntity(id)) {
+					continue;
+				}
 				if (em.template HasComponent<CameraShake>(id)) {
 					mShakeEntity = id;
 				}

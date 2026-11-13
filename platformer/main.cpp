@@ -5,6 +5,7 @@
 #include "CollisionComponent.h"
 #include "CollisionLateSystem.h"
 #include "CollisionSystem.h"
+#include "CollisionSystemUpdate.h"
 #include "ECSEngine.h"
 #include "EntityManager.h"
 #include "GravityComponent.h"
@@ -128,6 +129,7 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
                 }
                 collision.collisionBox = info.bounds;
                 collision.previousCollisionBox = info.bounds;
+                collision.previousCollisionBox.topLeft = info.bounds.topLeft + pos;
                 em.AddComponent(entity, collision);
             }
         }
@@ -148,10 +150,10 @@ int main(int argc, char* argv[]) {
     auto &sManager = engine.GetSpriteManager();
     // Load sounds
     auto &soundManager = engine.GetSoundManager();
-    soundManager.RegisterSound(gResourcePath + "sfx_jump.ogg", "Jump Sound");
-    soundManager.RegisterSound(gResourcePath + "footstep_grass_003.ogg", "Landing Sound");
-    soundManager.RegisterSound(gResourcePath + "sfx_gem.ogg", "Collect Star Sound");
-    soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "Push Wall Sound");
+    soundManager.RegisterSound(gResourcePath + "sfx_jump.ogg", "jump");
+    soundManager.RegisterSound(gResourcePath + "footstep_grass_003.ogg", "landing sound");
+    soundManager.RegisterSound(gResourcePath + "sfx_gem.ogg", "collect star");
+    soundManager.RegisterSound(gResourcePath + "footstep_snow_001.ogg", "push wall");
 
     // Load maps
     ECSEngine::Rect temp;
@@ -170,7 +172,7 @@ int main(int argc, char* argv[]) {
     spriteComp.bounds = ECSEngine::Rect{ECSEngine::Point2D(0, 0), 64, 64};
     spriteComp.worldSpace = true;
     em.AddComponent(playerID, spriteComp);
-    em.AddComponent(playerID, ECSEngine::GravityComponent(ECSEngine::Point2D(0.f, 1.f)));
+    em.AddComponent(playerID, ECSEngine::GravityComponent(ECSEngine::Point2D(0.f, 1000.f)));
     em.AddComponent(playerID, ECSEngine::InputComponent(playerID));
     em.AddComponent(playerID, ECSEngine::LocationComponent{playerSpawn});
     em.AddComponent(playerID, ECSEngine::MovementComponent{ECSEngine::Point2D(0.f, 0.f)});
@@ -180,6 +182,7 @@ int main(int argc, char* argv[]) {
     collision.staticEntity = 0;
     collision.collisionBox = ECSEngine::Rect{ECSEngine::Point2D(0.f, 0.f), 64, 64};
     collision.previousCollisionBox = collision.collisionBox;
+    collision.previousCollisionBox.topLeft = collision.collisionBox.topLeft + playerSpawn;
     em.AddComponent(playerID, collision);
 
     // Setup score component
@@ -214,6 +217,7 @@ int main(int argc, char* argv[]) {
     ECSEngine::EntityID cameraID = em.CreateEntity("camera");
     ECSEngine::CameraComponent camera{};
     camera.position = playerSpawn;
+    camera.position.y = 450;
     camera.worldUnitsPerPixel = 1;
     camera.hardExclusion = ECSEngine::Rect{ECSEngine::Point2D(width * 0.1f), width * 0.8f, height};
     camera.softExclusion = ECSEngine::Rect{ECSEngine::Point2D(width * 0.3f), width * 0.4f, height};
@@ -224,7 +228,7 @@ int main(int argc, char* argv[]) {
 
     // Add all systems
     auto& sm = engine.GetSystemManager();
-    sm.AddSystem(std::make_unique<ECSEngine::CollisionLateSystem<COMPONENTS>>());
+    sm.AddSystem(std::make_unique<ECSEngine::CollisionSystemUpdate<COMPONENTS>>());
     sm.AddSystem(std::make_unique<ECSEngine::InputSystem<COMPONENTS>>());
     sm.AddSystem(std::make_unique<ECSEngine::GravitySystem<COMPONENTS>>());
     sm.AddSystem(std::make_unique<ECSEngine::MovementSystem<COMPONENTS>>());

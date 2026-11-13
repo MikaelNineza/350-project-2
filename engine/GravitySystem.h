@@ -27,6 +27,9 @@ public:
 		auto &em = engine->GetEntityManager();
 		for (auto &entity : em) {
 			EntityID id = entity.GetID();
+			if (!em.ValidEntity(id)) {
+					continue;
+			}
 			if (!em.template HasComponent<GravityComponent>(id) ||
 				!em.template HasComponent<MovementComponent>(id)) {
 				continue;

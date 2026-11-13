@@ -15,6 +15,9 @@ namespace ECSEngine {
             auto &em = engine->GetEntityManager();
             for (const auto &entity : em) {
                 EntityID id = entity.GetID();
+                if (!em.ValidEntity(id)) {
+					continue;
+			    }
                 if (!em.template HasComponent<CollisionComponent>(id)) {
                     continue;
                 }
@@ -26,8 +29,8 @@ namespace ECSEngine {
 
 
                 auto &loc = em.template GetComponent<LocationComponent>(id);
-                col.prevCollisionBox = col.collisionBox;
-                col.prevCollisionBox.topLeft += loc.loc; // location is top left
+                col.previousCollisionBox = col.collisionBox;
+                col.previousCollisionBox.topLeft = col.previousCollisionBox.topLeft + loc.loc; // location is top left
             }
 
             return kContinue;
