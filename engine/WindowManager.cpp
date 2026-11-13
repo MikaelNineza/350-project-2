@@ -8,7 +8,7 @@ WindowManager::WindowManager(unsigned int width, unsigned int height, const std:
 std::shared_ptr<sf::RenderWindow> WindowManager::GetWindow() const { return mWindow; }
 
 Rect WindowManager::GetWindowBounds() const {
-    return Rect(Point2D(0.f, 0.f), GetWindowSize().x, GetWindowSize().y);
+    return Rect{Point2D(0.f, 0.f), GetWindowSize().x, GetWindowSize().y};
 }
 
 void WindowManager::DebugDrawRect(const Rect& r, int red, int green, int blue, int alpha) {

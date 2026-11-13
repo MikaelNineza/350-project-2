@@ -12,7 +12,7 @@ void SoundManager::RegisterSound(const std::string& soundPath, const std::string
         else {
             sf::Sound sound(buffer);
             mBuffers[soundName] = buffer;
-            mSounds[soundName] = sound; 
+            mSounds.emplace(soundName, sf::Sound(buffer));
         }
     }
 }
@@ -22,7 +22,7 @@ sf::Sound& SoundManager::GetSound(const std::string& soundName) {
         throw std::invalid_argument("SoundName has not been registered");
     }
 
-    return mSounds[soundName];
+    return mSounds.at(soundName);
 }
 
 }  // namespace ECSEngine
