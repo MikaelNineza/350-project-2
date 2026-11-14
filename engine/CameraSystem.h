@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include "CameraComponent.h"
+#include "CameraShakeComponent.h"
 #include "LocationComponent.h"
 #include "MathUtil.h"
 #include "SpriteComponent.h"
@@ -72,8 +73,19 @@ public:
             }
 
             camera.position = camera.position + Point2D(playerX, 0.0f) * camera.worldUnitsPerPixel;
+            auto viewCenter = camera.position;
+
+            if (em.template HasComponent<CameraShakeComponent>(id)) {
+                auto &shake = em.template GetComponent<CameraShakeComponent>(id);
+                if (shake.frameLimit > 0) {
+                    float sgn = (shake.frameLimit % 2 == 0) ? 1.f : -1.f;
+                    viewCenter = viewCenter + sgn * shake.offset;
+                    shake.frameLimit--;
+                }
+            }
+
             wm.SetWorldScale(camera.worldUnitsPerPixel);
-            wm.SetWorldCenter(camera.position);
+            wm.SetWorldCenter(viewCenter);
 
         }
         return kContinue;
