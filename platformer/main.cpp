@@ -165,6 +165,22 @@ int main(int argc, char* argv[]) {
     LoadMap(engine, gResourcePath, "sky.map");
     LoadMap(engine, gResourcePath, "world.map");
 
+    // Add extra star
+    ECSEngine::EntityID star = em.CreateEntity("star");
+    ECSEngine::Rect starBox{ECSEngine::Point2D(0.f, 0.f), 64.f, 64.f};
+    em.AddComponent(star, ECSEngine::LocationComponent{ECSEngine::Point2D{9 * 64, 5 * 64}});
+    em.AddComponent(star, ECSEngine::MovementComponent{ECSEngine::Point2D(0.f, 0.f)});
+
+    ECSEngine::CollisionComponent starCollision{};
+    starCollision.collisionBox = starBox;
+    em.AddComponent(star, starCollision);
+
+    ECSEngine::SpriteComponent starSpriteComp;
+    starSpriteComp.textureID = starSprite;
+    starSpriteComp.bounds = starBox;
+    starSpriteComp.worldSpace = true;
+    em.AddComponent(star, starSpriteComp);
+
     // Place player
     ECSEngine::EntityID playerID = em.CreateEntity("player");
     ECSEngine::SpriteComponent spriteComp;
