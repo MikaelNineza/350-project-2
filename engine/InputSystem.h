@@ -12,14 +12,14 @@
 
 namespace ECSEngine {
 
-const float kMaxRunVelocity = 900;
+const float kMaxRunVelocity = 300;
 const float kDashVelocity = 1500;
-const float kJumpVelocity = 800;
+const float kJumpVelocity = 600;
 const float kGroundRunAcceleration = 60;
 const float kAirRunAcceleration = 30;
 const float kDashInterval = 60;
-const float kWallJumpVelocityY = 300;
-const float kWallJumpVelocityX = 120;
+const float kWallJumpVelocityY = 600;
+const float kWallJumpVelocityX = 300;
 const float kJumpReleaseAcceleration = 50;
 const float kDownHeldFallAcceleration = 50;
 

@@ -72,7 +72,9 @@ public:
 
             CollisionComponent col{};
             col.staticEntity = 0;
-            col.collisionBox = item.bounds;
+            // The values for this box were chosen from Prompt #2 (see readme)
+            col.collisionBox = Rect{Point2D(16.f, 16.f), 35, 35};
+
             col.previousCollisionBox = item.bounds;
             col.previousCollisionBox.topLeft = item.bounds.topLeft + item.spawnLoc;
             em.AddComponent(star, col);
@@ -87,7 +89,7 @@ public:
         return kContinue;
     }
 private:
-    static constexpr float kStarVeloX = 10.f;
+    static constexpr float kStarVeloX = 100.f;
     static constexpr float kStarGravity = 1000.f;
     std::mt19937 mRandom;
 

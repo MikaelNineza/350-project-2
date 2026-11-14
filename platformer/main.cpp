@@ -167,10 +167,11 @@ int main(int argc, char* argv[]) {
     // Place player
     ECSEngine::EntityID playerID = em.CreateEntity("player");
     ECSEngine::SpriteComponent spriteComp;
-    ECSEngine::SpriteID pSprite = sManager.RegisterTexture(gResourcePath + "spritesheet-characters-default.png", ECSEngine::Rect{ECSEngine::Point2D(0, 0), 128, 128});
+    ECSEngine::SpriteID pSprite = sManager.RegisterTexture(gResourcePath + "spritesheet-characters-default.png", ECSEngine::Rect{ECSEngine::Point2D(640, 128), 128, 128});
     spriteComp.textureID = pSprite;
-    spriteComp.bounds = ECSEngine::Rect{ECSEngine::Point2D(0, 0), 64, 64};
+    spriteComp.bounds = ECSEngine::Rect{ECSEngine::Point2D(0, 0), 128, 128};
     spriteComp.worldSpace = true;
+    playerSpawn.y = playerSpawn.y - 64.f;
     em.AddComponent(playerID, spriteComp);
     em.AddComponent(playerID, ECSEngine::GravityComponent(ECSEngine::Point2D(0.f, 1000.f)));
     em.AddComponent(playerID, ECSEngine::InputComponent(playerID));
@@ -180,7 +181,10 @@ int main(int argc, char* argv[]) {
 
     ECSEngine::CollisionComponent collision{};
     collision.staticEntity = 0;
-    collision.collisionBox = ECSEngine::Rect{ECSEngine::Point2D(0.f, 0.f), 64, 64};
+
+    // The values for this box were chosen from Prompt #2 (see readme)
+    collision.collisionBox = ECSEngine::Rect{ECSEngine::Point2D(40.f, 36.f), 48, 92};
+
     collision.previousCollisionBox = collision.collisionBox;
     collision.previousCollisionBox.topLeft = collision.collisionBox.topLeft + playerSpawn;
     em.AddComponent(playerID, collision);
