@@ -12,7 +12,7 @@ void SoundManager::RegisterSound(const std::string& soundPath, const std::string
         else {
             sf::Sound sound(buffer);
             mBuffers[soundName] = buffer;
-            mSounds.emplace(soundName, sf::Sound(buffer));
+            mSounds.emplace(soundName, sf::Sound(mBuffers[soundName]));
         }
     }
 }

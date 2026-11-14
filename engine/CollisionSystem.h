@@ -12,7 +12,7 @@
 #include "CollisionComponent.h"
 #include "LocationComponent.h"
 #include "InputComponent.h"
-#include "CameraComponent.h"
+#include "CameraShakeComponent.h"
 #include "MovementComponent.h"
 #include "RespawnComponent.h"
 #include "ScoreComponent.h"
@@ -185,11 +185,11 @@ namespace ECSEngine {
 				else {
 					// bounce physics for star (ai assisted)
 					// direction reverses and both velocities dampen by a factor of 10% (change later/experiment with different values)
-					normal *= -0.9f;
+					normal *= -dynamicsDampen;
 					if (std::abs(normal) < 1.f) {
 						normal = 0.f;
 					}
-					tangent *= 0.9f;
+					tangent *= dynamicsDampen;
 				}
 			};
 
@@ -304,11 +304,11 @@ namespace ECSEngine {
 		}
 
 		void Shake(tEntityManager &em, float xVelo, float yVelo) {
-			auto &shake = em.template GetComponent<CameraShake>(mShakeEntity);
-			shake.frameLimit = 6; // change later / test values
-			float shakeScale = 1.f / 60.f; // change later / test values
-			shake.offset.x = xVelo * shakeScale;
-			shake.offset.y = yVelo * shakeScale;
+			auto &shake = em.template GetComponent<CameraShakeComponent>(mShakeEntity);
+			shake.frameLimit = shakeDuration;
+			float shakeScale = 1.f / 60.f;
+			shake.offset.x = xVelo * shakeScale * shakeFloat;
+			shake.offset.y = yVelo * shakeScale * shakeFloat;
 		}
 
 		// collect all objects relevant for the collision system
@@ -323,7 +323,7 @@ namespace ECSEngine {
 				if (!em.ValidEntity(id)) {
 					continue;
 				}
-				if (em.template HasComponent<CameraShake>(id)) {
+				if (em.template HasComponent<CameraShakeComponent>(id)) {
 					mShakeEntity = id;
 				}
 				if (em.template HasComponent<ScoreComponent>(id)) {
@@ -344,6 +344,9 @@ namespace ECSEngine {
 			}
 		}
 
+		static constexpr float dynamicsDampen = 0.9f;
+		static constexpr float shakeFloat = 0.25f;
+		static constexpr int shakeDuration = 6;
 		std::string mName = "CollisionSystem";
 		std::vector<EntityID> mStatics;
 		std::vector<EntityID> mDynamics;

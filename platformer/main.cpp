@@ -2,6 +2,7 @@
 #include <unordered_map>
 
 #include "CameraSystem.h"
+#include "CameraShakeComponent.h"
 #include "CollisionComponent.h"
 #include "CollisionLateSystem.h"
 #include "CollisionSystem.h"
@@ -30,7 +31,7 @@ std::string gResourcePath = "../assets/";
     ECSEngine::LocationComponent, ECSEngine::MovementComponent, ECSEngine::CollisionComponent, \
         ECSEngine::SpriteComponent, ECSEngine::SpawnComponent, ECSEngine::CameraComponent,     \
         ECSEngine::CameraFollower, ECSEngine::InputComponent, ECSEngine::GravityComponent,     \
-        ECSEngine::CameraShake, ECSEngine::ScoreComponent, ECSEngine::RespawnComponent
+        ECSEngine::CameraShakeComponent, ECSEngine::ScoreComponent, ECSEngine::RespawnComponent
 using Engine = ECSEngine::ECSEngine<COMPONENTS>;
 
 struct LineInfo {
@@ -224,7 +225,7 @@ int main(int argc, char* argv[]) {
     camera.speed = 0.1f;
     em.AddComponent(cameraID, camera);
     em.AddComponent(cameraID, ECSEngine::CameraFollower{playerID});
-    em.AddComponent(cameraID, ECSEngine::CameraShake{0, ECSEngine::Point2D(0, 0)});
+    em.AddComponent(cameraID, ECSEngine::CameraShakeComponent{0, ECSEngine::Point2D(0, 0)});
 
     // Add all systems
     auto& sm = engine.GetSystemManager();
