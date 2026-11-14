@@ -7,6 +7,12 @@
     Prompt #2: My player and the stars have a bounding box a lot larger than their sprites, why is that?
     This led me to learn that the character sit inside a 128x128 cell (I thought it was 64x64 like the tiles file)
 
+    Prompt #3: How to implement bounce physics for a dynamic vs a static object (star vs tile) given movement component
+    Suggested that both horizontal and vertical movement be dampened, with horizontal movement reversing in the other direction
+
+    Prompt #4: Suggestion for bounce physics between two dynamic objects (stars colliding) give pseudocode
+    Suggested for stars to move away from each other horizontally upon collision 
+
     We used AI to help write the documentation. We reviewed every AI-generated documentation to make sure it is accurate.
 
 ## Engine API: resource managers and terms of use
