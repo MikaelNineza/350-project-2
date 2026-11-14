@@ -7,11 +7,15 @@
     Prompt #2: My player and the stars have a bounding box a lot larger than their sprites, why is that?
     This led me to learn that the character sit inside a 128x128 cell (I thought it was 64x64 like the tiles file)
 
-    Prompt #3: How to implement bounce physics for a dynamic vs a static object (star vs tile) given movement component
+    Prompt #3: How to implement bounce physics for a dynamic vs a static object (star vs tile) given movement component (code was given)
     Suggested that both horizontal and vertical movement be dampened, with horizontal movement reversing in the other direction
 
     Prompt #4: Suggestion for bounce physics between two dynamic objects (stars colliding) give pseudocode
     Suggested for stars to move away from each other horizontally upon collision 
+
+    Prompt #5: AI was provided the assignment spec and was asked for a step by step implementation for InputSystem (everything necessary for it in words)
+    The main logic / order of InputSystem was inspired by the prompt results. 
+    In particular, adjustment of velocity.x in either direction was taken directly from AI 
 
     We used AI to help write the documentation. We reviewed every AI-generated documentation to make sure it is accurate.
 
@@ -49,3 +53,19 @@ Rules that follow from this table:
 5. Set a shared sprite's transform right before drawing it. Do not rely on it
    keeping a value between draws.
 6. Nothing from any manager may be used after the `ECSEngine` is destroyed.
+
+## Member Contribution
+Aaron: implemented the following:
+-CollisionSystem
+-CollisionLateSystem
+-MovementSystem
+-GravitySystem
+-InputSystem
+-ECSEngine
+
+Mikael: implemented the following:
+-All managers
+-CameraSystem
+-SpriteSystem
+-ScoreSystem
+-main
