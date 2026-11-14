@@ -1,0 +1,45 @@
+# CMPUT 350 HW 2
+
+## AI Usage:
+    Prompt #1: Why can I not move? Do not give me code, simply tell me what the problem is.
+    This led me to line 34 in MovementSystem which was dividing velocity by 60.
+
+    Prompt #2: My player and the stars have a bounding box a lot larger than their sprites, why is that?
+    This led me to learn that the character sit inside a 128x128 cell (I thought it was 64x64 like the tiles file)
+
+    We used AI to help write the documentation. We reviewed every AI-generated documentation to make sure it is accurate.
+
+## Engine API: resource managers and terms of use
+
+`ECSEngine<Components...>` owns everything. It holds the window, one
+instance of each manager, and the system list. Systems reach the managers through
+the `EngineView*` passed to `System::Run()`. Every manager reference is valid for
+the engine's lifetime. The table below covers what you get *from* a manager,
+which is often valid for less time. Full details are in each header.
+
+| Call | Returns | Owned by | Valid until |
+|------|---------|----------|-------------|
+| `EntityManager::CreateEntity(name)` | `EntityID` (handle) | EntityManager | `RemoveEntity(id)`. Ids are **recycled**, so a stale id can alias a new entity |
+| `EntityManager::GetComponent<T>(id)` | `T&` into storage | EntityManager | next `AddComponent<T>` on **any** entity (vector may reallocate), or `RemoveComponent<T>(id)` / `RemoveEntity(id)` |
+| iterating `EntityManager` (`for (auto& e : em)`) | `const Entity&` | EntityManager | next `CreateEntity()`. Removed entities are still visited, so check `ValidEntity(id)` |
+| `EntityManager::GetComponentStorage<T>()` | `ComponentStorage<T>&` | EntityManager | engine lifetime (elements follow the `GetComponent` rules) |
+| `SpriteManager::RegisterTexture(path, rect)` | `SpriteID` (handle) | SpriteManager | engine lifetime. Textures are cached per path and never unloaded |
+| `SpriteManager::GetSprite(id)` | `sf::Sprite&` (**shared** by all users of `id`) | SpriteManager | next `RegisterTexture()` |
+| `SoundManager::RegisterSound(path, name)` | nothing | SoundManager | engine lifetime. A duplicate name is ignored, and a failed load leaves the name unregistered |
+| `SoundManager::GetSound(name)` | `sf::Sound&` (**shared**, one voice per name) | SoundManager | engine lifetime. Throws `std::invalid_argument` if the name was never registered |
+| `WindowManager::GetWindow()` | `std::shared_ptr<sf::RenderWindow>` | shared | the object lives while any handle exists, but it is **closed** when the engine is destroyed |
+| `WindowManager` conversions / `GetWindowBounds()` | values | caller | n/a (copies) |
+
+Rules that follow from this table:
+
+1. Store **handles** (`EntityID`, `SpriteID`, sound names) in components and systems,
+   never references or pointers returned by a manager.
+2. Get component references fresh inside `Run()` and use them within that block.
+   Do not call `AddComponent<T>` while holding a `T&`.
+3. Never call `CreateEntity()` inside a loop over the entity manager. Collect the
+   entities to create, then create them after the loop (see `SpawnSystem`).
+   `RemoveEntity()` during iteration is safe.
+4. Register all textures and sounds during setup, before `engine.Run()`.
+5. Set a shared sprite's transform right before drawing it. Do not rely on it
+   keeping a value between draws.
+6. Nothing from any manager may be used after the `ECSEngine` is destroyed.
