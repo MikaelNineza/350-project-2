@@ -1,7 +1,11 @@
+#pragma once
+
 #include "WindowManager.h"
 #include "MathUtil.h"
 
-struct CameraShakeComponent {
+namespace ECSEngine {
+    struct CameraShakeComponent {
     int frameLimit;
     ECSEngine::Point2D offset;
 };
+}
