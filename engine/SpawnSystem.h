@@ -89,7 +89,7 @@ public:
         return kContinue;
     }
 private:
-    static constexpr float kStarVeloX = 10.f;
+    static constexpr float kStarVeloX = 100.f;
     static constexpr float kStarGravity = 1000.f;
     std::mt19937 mRandom;
 
